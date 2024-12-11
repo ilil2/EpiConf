@@ -8,7 +8,14 @@ if [ "$answer" = "y" ]; then
     elif [ "$answer" = "2" ]; then
         sed -i "" ~/afs/.confs/bashrc
     elif [ "$answer" = "3" ]; then
-        sed -i "s/PS1='.*'/PS1='\[\e[1;32m\]┌──(\[\e[1;34m\]\u@\h\[\e[1;32m\])-[\[\e[1;37m\]\W\[\e[1;32m\]] $(git_branch)\n\[\e[1;32m\]└─\[\e[00m\]\$ '/g" ~/afs/.confs/bashrc
+        echo "git_branch() {" >> ~/afs/.confs/bashrc
+	    echo "  branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)" >> ~/afs/.confs/bashrc
+	    echo '  if [ -n "$branch" ]; then' >> ~/afs/.confs/bashrc
+		echo "      changes=$(git status --porcelain 2>/dev/null | wc -l)" >> ~/afs/.confs/bashrc
+		echo '      echo -e "\e[0;31mgit:(\e[0;33m$branch\e[0;31m)±$changes"' >> ~/afs/.confs/bashrc
+	    echo "  fi" >> ~/afs/.confs/bashrc
+        echo "}" >> ~/afs/.confs/bashrc
+        echo "PS1='\[\e[1;32m\]┌──(\[\e[1;34m\]\u@\h\[\e[1;32m\])-[\[\e[1;37m\]\W\[\e[1;32m\]] $(git_branch)\n\[\e[1;32m\]└─\[\e[00m\]\$ '" >> ~/afs/.confs/bashrc
     fi
 fi
 
